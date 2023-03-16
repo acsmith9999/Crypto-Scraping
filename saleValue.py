@@ -35,15 +35,15 @@ if results.find("div", string=coin):
     sale_value = float(price) * amount_sold
 
     df.iloc[0,0] = name.text
-    print(name.text.strip())
+    # print(name.text.strip())
     df.iloc[0,1] = price
-    print(f"Price at {sale_date}: ${price}")
+    # print(f"Price at {sale_date}: ${price}")
     df.iloc[0,2] = amount_sold
-    print(f"Amount sold at {sale_date}: {amount_sold}")
+    # print(f"Amount sold at {sale_date}: {amount_sold}")
     df.iloc[0,3] = sale_value
-    print(f"Value of sale: ${sale_value}")
-    print("------------")
-    print(df)
+    # print(f"Value of sale: ${sale_value}")
+    # print("------------")
+    # print(df)
 
 else:
     print("error: coin code not found")
