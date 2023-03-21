@@ -6,37 +6,54 @@
     <div>
         <h2>Add coins to search</h2>
         <form>
-            <label for="itemInput">Coin Code (e.g., type "BTC" for Bitcoin): </label>
-            <input type="text" id="itemInput" required />
-            <br>
-            <label for="coinValue">Amount You Hold (e.g., 0.001): </label>
-            <input type="number" id="coinValue" required />
-            <br>
-            <button type="submit" onclick="addItem()">Add to list</button>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="itemInput">Coin Code (e.g., type "BTC" for Bitcoin): </label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="text" id="itemInput" required />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="coinValue">Amount You Hold (e.g., 0.001): </label>
+                <div class="col-sm-5">
+                    <input class="form-control" type="number" id="coinValue" required />
+                </div>
+            </div>
+            <button class="btn btn-dark" type="submit" onclick="addItem()">Add to list</button>
+
         </form>
-        <ul id="itemList"></ul>
+        <div class="list-group d-inline-block" id="itemList">
+            <ul id="itemList"></ul>
+        </div>
     </div>
+
+
 
     <div>
         <h2>Select date range</h2>
-        <div>
-          <label for="fromDate">From:</label>
-          <input type="date" id="fromDate">
-          <label for="toDate">To:</label>
-          <input type="date" id="toDate">
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label" for="fromDate">From:</label>
+            <div class="col-sm-5">
+                <input type="date" id="fromDate">
+            </div>
         </div>
-        <p id="selectedDates"></p>
+        <div class="form-group row">
+            <label class="col-sm-1 col-form-label" for="toDate">To:</label>
+            <div class="col-sm-5">
+                <input type="date" id="toDate">
+            </div>
+        </div>
     </div>
 
-    <button id="run-button">Search</button> 
+    <button class="btn btn-primary" id="run-button">Search</button> 
 
     <div class="value-tables">
         <h2>Results</h2>
-        <div id="table-container">
+        <div class="table-responsive" id="table-container">
         </div>
+        <!-- <div><button class="btn btn-success" id="export-button">Export CSV</button></div> -->
     </div>
 
-    <div><button id="export-button">Export CSV</button></div>
+
 
     <script>
         const itemList = document.getElementById('itemList');
@@ -51,7 +68,8 @@
   
           if (itemText !== '' && amountInput.value !== '') {
             const item = document.createElement('li');
-            item.textContent = itemText + " " + amountValue;
+            item.textContent = "Coin: " + itemText + ". Amount: " + amountValue + ". ";
+            item.classList = 'list-group-item'
 
   
             // Add event listener to select item when clicked
@@ -61,6 +79,7 @@
   
             // Add button to remove item
             const removeButton = document.createElement('button');
+            removeButton.classList = 'btn btn-danger';
             removeButton.textContent = 'Remove';
             removeButton.addEventListener('click', () => {
                 const index = coinsArray.findIndex(function (coin) {
@@ -90,14 +109,18 @@
 
         runButton.addEventListener('click', () => { 
                        
-            const fromDate = document.getElementById("fromDate").value;
-            const toDate = document.getElementById("toDate").value;
+            const fromDate = document.getElementById("fromDate");
+            const toDate = document.getElementById("toDate");
 
+            if (fromDate.value == "" || toDate.value == ""){
+                alert("Please select dates to search!");
+                return;
+            }
             console.log(coinsArray);
 
             const requestData = {
-                fromDate: fromDate,
-                toDate: toDate,
+                fromDate: fromDate.value,
+                toDate: toDate.value,
                 coins: coinsArray,
             };
             fetch('/values', {
@@ -111,17 +134,21 @@
             .then(tableHtml => {
                 //create table element
                 const table = document.createElement('table');
+                table.classList = 'table table-striped';
                 tableContainer.innerHTML = tableHtml;
                 //add table to container
                 tableContainer.appendChild(table);
-            })
-
+                // Add button to export table
+                const exportButton = document.createElement('button');
+                exportButton.classList = 'btn btn-success';
+                exportButton.textContent = 'Export CSV';
+                exportButton.addEventListener('click', () =>{
+                tableToCSV();
+                });
+                tableContainer.appendChild(exportButton);
+            })           
         }); 
 
-        const exportButton = document.getElementById('export-button');
-        exportButton.addEventListener('click', () =>{
-            tableToCSV();
-        });
 
         const today = new Date();
         const yesterday = new Date(today);
